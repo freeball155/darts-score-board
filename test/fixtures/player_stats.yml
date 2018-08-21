@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  player_id: 1
+  stat_code: MyText
+  stat_value: 1
+
+two:
+  player_id: 1
+  stat_code: MyText
+  stat_value: 1

@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  num_players: 1
+  players: MyText
+  state: MyText
+  type: MyText
+  score: MyText
+  finish_type: 1
+  points: 1
+  num_legs: 1
+  num_sets: 1
+
+two:
+  num_players: 1
+  players: MyText
+  state: MyText
+  type: MyText
+  score: MyText
+  finish_type: 1
+  points: 1
+  num_legs: 1
+  num_sets: 1

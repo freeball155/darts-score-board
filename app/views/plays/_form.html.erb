@@ -1,0 +1,57 @@
+<%= form_with(model: play, local: true) do |form| %>
+  <% if play.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(play.errors.count, "error") %> prohibited this play from being saved:</h2>
+
+      <ul>
+      <% play.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :game_id %>
+    <%= form.number_field :game_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :set %>
+    <%= form.number_field :set %>
+  </div>
+
+  <div class="field">
+    <%= form.label :leg %>
+    <%= form.number_field :leg %>
+  </div>
+
+  <div class="field">
+    <%= form.label :turn %>
+    <%= form.number_field :turn %>
+  </div>
+
+  <div class="field">
+    <%= form.label :player %>
+    <%= form.number_field :player %>
+  </div>
+
+  <div class="field">
+    <%= form.label :1dart %>
+    <%= form.number_field :1dart %>
+  </div>
+
+  <div class="field">
+    <%= form.label :2dart %>
+    <%= form.number_field :2dart %>
+  </div>
+
+  <div class="field">
+    <%= form.label :3dart %>
+    <%= form.number_field :3dart %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

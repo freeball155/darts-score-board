@@ -1,0 +1,59 @@
+<div class="container">
+<h1>Новая игра</h1>
+<%= form_with scope: :game, url: {action: "create"}, local: true do |form| %>
+
+  <h0>Выберите игроков:</h0>
+  <% @players.each do |player| %>
+    <li>
+      <%= form.check_box :players, { multiple: true }, player.id, false %>
+      <%= player.name %>
+    </li>
+  <% end %>
+
+  <br></br>
+
+  <h0>Тип игры:</h0>
+  <%= form.select(:game_type) do %>
+    <% [['X01', 'X01'], ['Cricket', 'Cricket'],['Eleven', 'Eleven']].each do |c| -%>
+      <%= content_tag(:option, c.first, value: c.last) %>
+    <% end %>
+  <% end %>
+
+  <br></br>
+
+  <h0>Кол-во очков X01:</h0>
+  <%= form.select(:points) do %>
+    <% [['501', 501], ['401', 401], ['301', 301], ['201', 201], ['101', 101]].each do |c| -%>
+      <%= content_tag(:option, c.first, value: c.last) %>
+    <% end %>
+  <% end %>
+
+  <br></br>
+
+  <h0>Тип закрытия:</h0>
+  <% [[1, 'любой сектор', false],
+      [2, 'double', true],
+      [4, 'triple', false]].each do |f| %>
+    <li>
+      <%= form.check_box :finish_type, { multiple: true, checked: f[2] }, f[0], false %>
+      <%= f[1] %>
+    </li>
+  <% end %>
+
+  <br></br>
+
+  <h0>Кол-во сетов:</h0>
+  <%= form.number_field(:num_sets, min: 1, max: 20, step: 1, value: 1) %>
+
+  <br></br>
+
+  <h0>Кол-во игр в сете:</h0>
+  <%= form.number_field(:num_legs, min: 1, max: 50, step: 1, value: 1) %>
+
+  <br></br>
+
+  <p>
+    <%= form.submit "Создать"%>
+  </p>
+<% end %>
+</div>

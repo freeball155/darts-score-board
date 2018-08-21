@@ -1,0 +1,13 @@
+<div class="container">
+<h1>Новый игрок</h1>
+<%= form_with scope: :player, url: players_path,local: true do |form| %>
+  <p>
+    <%= form.label :Имя %><br>
+    <%= form.text_field :name %>
+  </p>
+
+  <p>
+    <%= form.submit %>
+  </p>
+<% end %>
+</div>

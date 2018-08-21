@@ -1,0 +1,7 @@
+{
+  "name": "darts",
+  "private": true,
+  "dependencies": {
+    "highcharts": "^6.1.1"
+  }
+}

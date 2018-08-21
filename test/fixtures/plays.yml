@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  game_id: 1
+  set: 1
+  leg: 1
+  turn: 1
+  player: 1
+  1dart: 1
+  2dart: 1
+  3dart: 1
+
+two:
+  game_id: 1
+  set: 1
+  leg: 1
+  turn: 1
+  player: 1
+  1dart: 1
+  2dart: 1
+  3dart: 1

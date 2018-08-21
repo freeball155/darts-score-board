@@ -1,0 +1,415 @@
+
+<div class="container">
+
+<%
+  @games_stat = GamesStat.where(player_id: @player.id).order(:created_at).pluck(Arel.sql('created_at, printf("%.2f", 1.0*total_points / total_darts)'))
+%>
+<% line_chart @games_stat %>
+
+
+<% players_list = Player.all %>
+<% @data_for_chart = players_list.map do |player|
+  { name: player.name, data: GamesStat.where(player_id: player.id).order(:created_at).pluck(Arel.sql('created_at, printf("%.2f", 1.0*total_points / total_darts)')) }
+end %>
+<% line_chart @data_for_chart  %>
+
+<p>
+  <strong>Имя:</strong>
+  <%= @player.name %>
+</p>
+<p>
+  <% if player_stat = PlayerStat.where(player_id: @player.id) %>
+    <% fav_sector = Array.new %>
+    <% fav_sector_count = 0 %>
+    <% player_stat.each do |some_stat| %>
+      <% case some_stat[:stat_code] %>
+        <% when "1dart_sum" %>
+          <% @dart1_sum = some_stat[:stat_value] %>
+        <% when "2dart_sum" %>
+          <% @dart2_sum = some_stat[:stat_value] %>
+        <% when "3dart_sum" %>
+          <% @dart3_sum = some_stat[:stat_value] %>
+        <% when "1dart_miss" %>
+          <% @dart1_miss = some_stat[:stat_value] %>
+        <% when "2dart_miss" %>
+          <% @dart2_miss = some_stat[:stat_value] %>
+        <% when "3dart_miss" %>
+          <% @dart3_miss = some_stat[:stat_value] %>
+        <% when "1dart_throw" %>
+          <% @dart1_throw = some_stat[:stat_value] %>
+        <% when "2dart_throw" %>
+          <% @dart2_throw = some_stat[:stat_value] %>
+        <% when "3dart_throw" %>
+          <% @dart3_throw = some_stat[:stat_value] %>
+        <% when "max_points" %>
+          <% @max_points = some_stat[:stat_value] %>
+        <% when "points_60-99" %>
+          <% @points_60_99 = some_stat[:stat_value] %>
+        <% when "points_100-139" %>
+          <% @points_100_139 = some_stat[:stat_value] %>
+        <% when "points_140-179" %>
+          <% @points_140_179 = some_stat[:stat_value] %>
+        <% when "points_180" %>
+          <% @points_180 = some_stat[:stat_value] %>
+        <% when /^sector_(.*)/ %>
+          <% if some_stat[:stat_value] > fav_sector_count %>
+            <% fav_sector = [$1] %>
+            <% fav_sector_count = some_stat[:stat_value] %>
+          <% elsif some_stat[:stat_value] == fav_sector_count %>
+            <% fav_sector.push($1) %>
+          <% end %>
+        <%
+          when "num_legs"
+            @num_legs = some_stat[:stat_value]
+          when "num_legs_won"
+            @num_legs_won = some_stat[:stat_value]
+          when "num_sets"
+            @num_sets = some_stat[:stat_value]
+          when "num_sets_won"
+            @num_sets_won = some_stat[:stat_value]
+          when "checkout_total"
+            @checkout_total = some_stat[:stat_value]
+          when "checkout_success"
+            @checkout_success = some_stat[:stat_value]
+          when "checkout_maximum"
+            @checkout_maximum = some_stat[:stat_value]
+          when "checkout_sum"
+            @checkout_sum = some_stat[:stat_value]
+        %>
+      <% end %>
+    <% end %>
+      <table class="table table-hover table-sm w-auto">
+        <thead class="thead-dark">
+          <tr>
+            <th>Показатель</th>
+            <th>Значение</th>
+          </tr>
+        </thead>
+          <tr>
+            <th class="span" colspan="2" scope="colgroup">
+              Общая статистика
+            </th>
+          </tr>
+          <td align="right">
+            Процент выигранных матчей:
+          </td>
+          <td align="left">
+            <%= sprintf('%.2f', 100.0 * @num_sets_won / @num_sets) %>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            Процент выигранных партий:
+          </td>
+          <td align="left">
+            <%= sprintf('%.2f', 100.0 * @num_legs_won / @num_legs) %>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            Процент успешных закрытий:
+          </td>
+          <td align="left">
+            <%= sprintf('%.2f', 100.0 * @checkout_success / @checkout_total) %>
+          </td>
+        </tr>
+        <tr>
+          <th id="par" class="span" colspan="2" scope="colgroup">
+            Статистика по набранным очкам
+          </th>
+        </tr>
+        <tr>
+          <td align="right">
+            В среднем с одного дротика:
+          </td>
+          <td align="left">
+            <%= sprintf('%.2f', 1.0 * (@dart1_sum + @dart2_sum + @dart3_sum) / (@dart1_throw + @dart2_throw + @dart3_throw)) %>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            В среднем с трех дротиков:
+          </td>
+          <td align="left">
+            <%= sprintf('%.2f', 3.0 * (@dart1_sum + @dart2_sum + @dart3_sum) / (@dart1_throw + @dart2_throw + @dart3_throw))  %>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            Любимые сектора:
+          </td>
+          <td align="left">
+            <%= fav_sector.join(' ') %>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            Максимальное кол-во очков за подход:
+          </td>
+          <td align="left">
+            <%= @max_points %>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            60 -> 99:
+          </td>
+          <td align="left">
+            <%= @points_60_99 %>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            100 -> 139:
+          </td>
+          <td align="left">
+            <%= @points_100_139 %>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            140 -> 179:
+          </td>
+          <td align="left">
+            <%= @points_140_179 %>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            180:
+          </td>
+          <td align="left">
+            <%= @points_180 %>
+          </td>
+        </tr>
+        <%
+        @darts_stat = GamesStat.where(player_id: @player.id).pluck(Arel.sql('min(total_darts), max(total_darts), avg(total_darts)'))
+        if @darts_stat %>
+          <tr>
+            <th id="par" class="span" colspan="2" scope="colgroup">
+              Статистика по дротикам на партию
+            </th>
+          </tr>
+          <tr>
+            <td align="right">
+              минимум:
+            </td>
+            <td align="left">
+              <%= @darts_stat[0][0] %>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">
+              максимум:
+            </td>
+            <td align="left">
+              <%= @darts_stat[0][1] %>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">
+              среднее:
+            </td>
+            <td align="left">
+              <%= @darts_stat[0][2] %>
+            </td>
+          </tr>
+        <% end %>
+        <tr>
+          <th id="par" class="span" colspan="2" scope="colgroup">
+            Статистика по закрытиям
+          </th>
+        </tr>
+        <tr>
+          <td align="right">
+            средний checkout:
+          </td>
+          <td align="left">
+            <%= sprintf('%.2f', 1.0 * @checkout_sum / @checkout_success) %>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            максимальный checkout:
+          </td>
+          <td align="left">
+            <%= @checkout_maximum %>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            всего попыток:
+          </td>
+          <td align="left">
+            <%= @checkout_total %>
+          </td>
+        </tr>
+        <tr>
+          <td align="right">
+            успешных:
+          </td>
+          <td align="left">
+            <%= @checkout_success %>
+          </td>
+        </tr>
+      </table>
+      <div class="card">
+        <div class="card-body">
+        <h5 class="card-title">Статистика по дротикам</h5>
+          <div class="row font-weight-bold">
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+              бросков
+            </div>
+            <div class="col-2">
+              очков
+            </div>
+            <div class="col-2">
+              промахов
+            </div>
+            <div class="col-2">
+              среднее
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-2 text-right">
+              1
+            </div>
+            <div class="col-2">
+              <%= @dart1_throw %>
+            </div>
+            <div class="col-2">
+              <%= @dart1_sum %>
+            </div>
+            <div class="col-2">
+              <%= @dart1_miss %>
+            </div>
+            <div class="col-2">
+              <%= sprintf('%.2f', 1.0 * @dart1_sum / @dart1_throw) %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-2  text-right">
+              2
+            </div>
+            <div class="col-2">
+              <%= @dart2_throw %>
+            </div>
+            <div class="col-2">
+              <%= @dart2_sum %>
+            </div>
+            <div class="col-2">
+              <%= @dart2_miss %>
+            </div>
+            <div class="col-2">
+              <%= sprintf('%.2f', 1.0 * @dart2_sum / @dart2_throw) %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-2  text-right">
+              3
+            </div>
+            <div class="col-2">
+              <%= @dart3_throw %>
+            </div>
+            <div class="col-2">
+              <%= @dart3_sum %>
+            </div>
+            <div class="col-2">
+              <%= @dart3_miss %>
+            </div>
+            <div class="col-2">
+              <%= sprintf('%.2f', 1.0 * @dart3_sum / @dart3_throw) %>
+            </div>
+          </div>
+          <div class="row font-weight-bold">
+            <div class="col-2 text-right">
+              всего
+            </div>
+            <div class="col-2">
+              <%= @dart1_throw + @dart2_throw + @dart3_throw %>
+            </div>
+            <div class="col-2">
+              <%= @dart1_sum + @dart2_sum + @dart3_sum %>
+            </div>
+            <div class="col-2">
+              <%= @dart1_miss + @dart2_miss + @dart3_miss %>
+            </div>
+            <div class="col-2">
+              <%= sprintf('%.2f', 1.0 * (@dart1_sum + @dart2_sum + @dart3_sum) / (@dart1_throw + @dart2_throw + @dart3_throw)) %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <table class="table table-hover table-sm w-auto">
+        <thead class="thead-dark">
+          <tr>
+            <th></th>
+            <th>бросков</th>
+            <th>очков</th>
+            <th>промахов</th>
+            <th>среднее</th>
+          </tr>
+        </thead>
+      </table>
+      <div class="card">
+        <div class="card-body">
+        <h5 class="card-title">Статистика по партиям/матчам</h5>
+          <div class="row font-weight-bold">
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+              победа
+            </div>
+            <div class="col-2">
+              поражение
+            </div>
+            <div class="col-2">
+              ничья
+            </div>
+            <div class="col-2">
+              всего
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-2 text-right">
+              партий
+            </div>
+            <div class="col-2">
+              <%= sprintf('%d (%.2f%%)', @num_legs_won, 100.0 * @num_legs_won / @num_legs) %>
+            </div>
+            <div class="col-2">
+              <%= sprintf('%d (%.2f%%)', @num_legs - @num_legs_won, 100.0 * (@num_legs - @num_legs_won) / @num_legs) %>
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+              <%= @num_legs %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-2 text-right">
+              матчей
+            </div>
+            <div class="col-2">
+              <%= sprintf('%d (%.2f%%)', @num_sets_won, 100.0 * @num_sets_won / @num_legs) %>
+            </div>
+            <div class="col-2">
+              <%= sprintf('%d (%.2f%%)', @num_sets - @num_legs_won, 100.0 * (@num_sets - @num_legs_won) / @num_sets) %>
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-2">
+              <%= @num_legs %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  <% end %>
+
+</p>
+<%= link_to 'Назад', players_path %>
+
+</div>

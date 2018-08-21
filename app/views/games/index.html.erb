@@ -1,0 +1,47 @@
+<div class="container">
+  <h1>Список всех игр</h1>
+
+  <table class="table table-hover table-sm">
+    <thead class="thead-dark">
+      <tr>
+        <th>Игроки</th>
+        <th>Тип</th>
+        <th>Очки</th>
+        <th>Счёт</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <% @games.each do |game| %>
+      <tr class='clickable-row' data-href='<%= game_path(game) %>' style='cursor: pointer'>
+        <td>
+        <% game.players.split(',').map(&:to_i).each do |id| %>
+          <% begin %>
+            <% name = Player.find(id).name %>
+          <% rescue ActiveRecord::RecordNotFound => e %>
+            <% name = 'deleted' %>
+          <% end %>
+          <%= name %>
+        <% end %>
+        </td>
+        <td><%= game.game_type %></td>
+        <td><%= game.points %></td>
+        <td><%= game.score %></td>
+        <td><%= game.state %></td>
+      </tr>
+    <% end %>
+  </table>
+
+  <br></br>
+
+  <%= link_to 'Новая игра', new_game_path %>
+  <%= link_to 'Назад', welcome_index_path %>
+</div>
+
+<script type="text/javascript">
+  jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {
+      window.location = $(this).data("href");
+    });
+  });
+</script>
