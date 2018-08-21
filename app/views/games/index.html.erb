@@ -16,12 +16,13 @@
       <tr class='clickable-row' data-href='<%= game_path(game) %>' style='cursor: pointer'>
         <td>
         <% game.players.split(',').map(&:to_i).each do |id| %>
-          <% begin %>
-            <% name = Player.find(id).name %>
-          <% rescue ActiveRecord::RecordNotFound => e %>
-            <% name = 'deleted' %>
+          <% if player = Player.find(id) %>
+            <% if player.id == game.player_won %>
+              <b><%= player.name %></b>
+            <% else %>
+              <%= player.name %>
+            <% end %>
           <% end %>
-          <%= name %>
         <% end %>
         </td>
         <td><%= game.game_type %></td>
