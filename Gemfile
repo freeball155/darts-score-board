@@ -68,3 +68,4 @@ gem "chartkick"
 gem 'jquery-ui-rails'
 gem 'acts_as_list'
 gem 'rails-assets-datatables', source: 'https://rails-assets.org'
+gem 'highcharts-rails'
