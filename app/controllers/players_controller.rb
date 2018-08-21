@@ -43,7 +43,7 @@ class PlayersController < ApplicationController
         'sector_T1', 'sector_T2', 'sector_T3', 'sector_T4', 'sector_T5', 'sector_T6', 'sector_T7', 'sector_T8', 'sector_T9', 'sector_T10', 'sector_T11', 'sector_T12', 'sector_T13', 'sector_T14', 'sector_T15', 'sector_T16', 'sector_T17', 'sector_T18', 'sector_T19', 'sector_T20',
         'checkout_total',
 	      'checkout_success',
-        'chekout_maximum',
+        'checkout_maximum',
         'checkout_sum',
 	      '1dart_sum',
 	      '1dart_miss',
