@@ -4,14 +4,14 @@
 <%
   @games_stat = GamesStat.where(player_id: @player.id).order(:created_at).pluck(Arel.sql('created_at, printf("%.2f", 1.0*total_points / total_darts)'))
 %>
-<% line_chart @games_stat %>
+<%= line_chart @games_stat %>
 
 
 <% players_list = Player.all %>
 <% @data_for_chart = players_list.map do |player|
   { name: player.name, data: GamesStat.where(player_id: player.id).order(:created_at).pluck(Arel.sql('created_at, printf("%.2f", 1.0*total_points / total_darts)')) }
 end %>
-<% line_chart @data_for_chart  %>
+<%= line_chart @data_for_chart  %>
 
 <p>
   <strong>Имя:</strong>
