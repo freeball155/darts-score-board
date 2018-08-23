@@ -15,15 +15,16 @@
     <% @games.each do |game| %>
       <tr class='clickable-row' data-href='<%= game_path(game) %>' style='cursor: pointer'>
         <td>
-        <% game.players.split(',').map(&:to_i).each do |id| %>
-          <% if player = Player.find(id) %>
-            <% if player.id == game.player_won %>
-              <b><%= player.name %></b>
-            <% else %>
-              <%= player.name %>
-            <% end %>
+          <% games_stats = GamesStat.preload(:player).where(game_id: game.id) %>
+          <% games_stats.each do |stat| %>
+
+              <% if stat.player_id == game.player_won %>
+                <b><%= stat.player.name %></b>
+              <% else %>
+                <%= stat.player.name %>
+              <% end %>
+
           <% end %>
-        <% end %>
         </td>
         <td><%= game.game_type %></td>
         <td><%= game.points %></td>
