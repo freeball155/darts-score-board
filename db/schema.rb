@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_07_150101) do
+ActiveRecord::Schema.define(version: 2018_08_23_074953) do
 
   create_table "checkouts", force: :cascade do |t|
     t.integer "points"
@@ -43,6 +43,8 @@ ActiveRecord::Schema.define(version: 2018_08_07_150101) do
     t.integer "max_score"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_games_stats_on_game_id"
+    t.index ["player_id"], name: "index_games_stats_on_player_id"
   end
 
   create_table "player_stats", force: :cascade do |t|
