@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_07_150101) do
+ActiveRecord::Schema.define(version: 2018_08_23_074953) do
 
   create_table "checkouts", force: :cascade do |t|
     t.integer "points"
