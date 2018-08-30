@@ -1,17 +1,30 @@
 <div class="container">
   <h1>Список всех игр</h1>
 
-  <table class="table table-hover table-sm">
-    <thead class="thead-dark">
-      <tr>
-        <th>Игроки</th>
-        <th>Тип</th>
-        <th>Очки</th>
-        <th>Счёт</th>
-        <th></th>
-      </tr>
-    </thead>
+  <% all_games = Game
+               .joins('LEFT JOIN games_stats ON games.id = games_stats.game_id')
+               .joins('LEFT JOIN players ON games_stats.player_id = players.id')
+               .select('games.id as game_id,
+                        players.id as player_id,
+                        players.name as player_name,
+                        games.points-games_stats.total_points as points,
+                        games.player_won as player_won,
+                        games.state as state'
+                      ) %>
+    <% result = all_games.collect{|x| [x.game_id, x.player_id, x.player_name, x.points]}.group_by{|x| x[0]} %>
 
+<<<<<<< HEAD
+    <table class="table table-hover table-sm">
+      <thead class="thead-dark">
+        <tr>
+          <th>Игроки</th>
+          <th>Тип</th>
+          <th>Очки</th>
+          <th>Счёт</th>
+          <th>Статус</th>
+        </tr>
+      </thead>
+=======
     <% @games.each do |game| %>
       <tr class='clickable-row' data-href='<%= game_path(game) %>' style='cursor: pointer'>
         <td>
@@ -33,8 +46,28 @@
       </tr>
     <% end %>
   </table>
+>>>>>>> master
 
-  <br></br>
+      <% @games.each do |game| %>
+        <% head, *tail = result[game.id] %>
+        <% temp = head.zip(*tail) %>
+        <tr class='clickable-row' data-href='<%= game_path(game) %>' style='cursor: pointer'>
+          <td>
+            <% temp[2].each_with_index do |name,index| %>
+              <% if temp[1][index] == game.player_won %>
+                <b><%= name %></b>
+              <% else %>
+                <%= name %>
+              <% end %>
+            <% end %>
+          </td>
+          <td><%= game.game_type %></td>
+          <td><%= game.points %></td>
+          <td><%= temp[3].join(",") %></td>
+          <td><%= game.state %></td>
+        </tr>
+      <% end %>
+    </table>
 
   <%= link_to 'Новая игра', new_game_path %>
   <%= link_to 'Назад', welcome_index_path %>
