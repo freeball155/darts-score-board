@@ -2,6 +2,7 @@
   "name": "darts",
   "private": true,
   "dependencies": {
+    "heatmap.js": "^2.0.5",
     "highcharts": "^6.1.1"
   }
 }

@@ -382,13 +382,40 @@ end %>
     </tbody>
   </table>
 </div>
-
-
-
-
-
-
 </p>
+
+
+
+
+<div id='darts_board'>
+  <%= image_tag("winmau_blade_5.jpg", id: 'darts_board', size: "750x750", class: "align-self-start mr-3") %>
+</div>
+
 <%= link_to 'Назад', players_path %>
 
 </div>
+
+<script type="text/javascript">
+    function generateRandomData(len){
+      var points=[];
+      var max=0;
+      var width=750;
+      var height=750;
+      while(len--){
+        var val=Math.floor(Math.random()*100);
+        var radius=Math.floor(Math.random()*60);
+        max=Math.max(max,val);
+        var point={x:Math.floor(Math.random()*width),y:Math.floor(Math.random()*height),value:val,radius:radius};
+        points.push(point);
+      }
+      var data={max:max,data:points};
+      return data;
+    };
+
+    var heatmapInstance=h337.create({
+      container: document.getElementById('darts_board')
+    });
+
+    var data=generateRandomData(300);
+    heatmapInstance.setData(data);
+</script>
