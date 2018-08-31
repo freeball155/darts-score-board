@@ -416,6 +416,18 @@ end %>
       container: document.getElementById('darts_board')
     });
 
-    var data=generateRandomData(300);
-    heatmapInstance.setData(data);
+    $.ajax({
+              type: "GET",
+              url: "/stats/heatmap",
+              data: {id: <%= @player.id %>},
+              async: true,
+              dataType: "json",
+              success: function(response) {
+                heatmapInstance.setData(response);
+              },
+              error: function () {
+                alert("error");
+              }
+           });
+
 </script>

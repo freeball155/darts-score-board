@@ -5,6 +5,17 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+sectors_def = [
+  '1_inner',25,145,288,306,
+  'T1',145,160,288,306,
+  '1_outer',160,238,288,306,
+  'D1',238,253,288,306,
+  '2_inner',25,145,288,306,
+  'T2',145,160,288,306,
+  '2_outer',160,238,288,306,
+  'D2',238,253,288,306
+]
+
 checkout_list = [
   [2, 'D1'],
   [3, '1 D1'],
