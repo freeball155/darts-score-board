@@ -160,6 +160,7 @@ class PlaysController < ApplicationController
           end
           @game.score = temp_score.join(',')
           @game.save
+          PaperTrail::Version.destroy_all
           redirect_to :controller => 'games', :action => 'index' and return
         else
           curr_leg = 1
@@ -217,6 +218,23 @@ class PlaysController < ApplicationController
 
   def history
     @game = Game.find(params[:id])
+  end
+
+  def info_for_paper_trail
+    { play_id: Play.last.id }
+  end
+
+  def undo
+    Play.where("id >= ?", params[:play_id]).order('id DESC').each do |play|
+      PaperTrail::Version.where(play_id: play.id).order('id DESC').each do |ver|
+        if reify = ver.try(:reify)
+          reify.save
+        else
+          ver.item.destroy
+        end
+      end
+    end
+    redirect_to :controller => 'plays', :action => 'show', id: params[:game_id]
   end
 
   private

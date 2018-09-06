@@ -1,3 +1,3 @@
 class Player < ApplicationRecord
-  has_many :games_stats
+#  has_many :games_stats
 end

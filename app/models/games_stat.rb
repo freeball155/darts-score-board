@@ -1,4 +1,5 @@
 class GamesStat < ApplicationRecord
-  belongs_to :player
-  belongs_to :game
+  has_paper_trail
+#  belongs_to :player
+#  belongs_to :game
 end

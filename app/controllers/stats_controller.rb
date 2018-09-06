@@ -20,16 +20,18 @@ class StatsController < ApplicationController
       '12' => 234,
        '5' => 252,
       '20' => 270,
-       '1' => 280,
+       '1' => 288,
       '18' => 306,
        '4' => 324,
       '13' => 342
     }
     if sector_stat = PlayerStat.where('player_id == ? AND stat_code LIKE ?', params[:id], 'sector_%')
       result = []
+      min = 0
       max = 0
       sector_stat.each do |r|
         max = [r.stat_value, max].max
+        min = [r.stat_value, min].min
         if r.stat_code == 'sector_miss'
           rad = 320
           angle = 0
@@ -78,7 +80,7 @@ class StatsController < ApplicationController
           result.push({"sector": r.stat_code, "x": x, "y": y, "value": r.stat_value, "radius": radius, "index": index})
         end
       end
-      render json: {'min': 0, 'max': max, 'data': result}
+      render json: {'min': min, 'max': max, 'data': result}
     end
   end
 end
