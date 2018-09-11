@@ -63,6 +63,35 @@ class PlaysController < ApplicationController
     #вычисляем предварительный счет после броска
     temp_score[curr_pos] -= score
 
+    #проверяем выполнены ли условия для закрытия
+    game_over = 0
+    if temp_score[curr_pos] == 0
+      #finish_type == 1 - закрываться можно через любой сектор
+      if (@game.finish_type & 0b00001) == 1
+        game_over = 1
+      #finish_type == 2 - закрываться можно через последний double
+      elsif (@game.finish_type & 0b00010) >> 1 == 1
+        if params[:play]["dart3"] =~ /^D\d+/
+          game_over = 1
+        end
+      #finish_type == 4 - закрываться можно через последний triple
+      elsif (@game.finish_type & 0b00100) >> 2 == 1
+        if params[:play]["dart3"] =~ /^T\d+/
+          game_over = 1
+        end
+      #finish_type == 8 - закрываться можно через double в любом броске
+      elsif (@game.finish_type & 0b01000) >> 3 == 1
+        if params[:play]["dart1"] + params[:play]["dart2"] + params[:play]["dart3"] =~ /D/
+          game_over = 1
+        end
+      #finish_type == 16 - закрываться можно через triple в любом броске
+      elsif (@game.finish_type & 0b10000) >> 4 == 1
+        if params[:play]["dart1"] + params[:play]["dart2"] + params[:play]["dart3"] =~ /T/
+          game_over = 1
+        end
+      end
+    end
+
     #хорошие броски >59 и максимум записываем в статистику даже если при этом был перебор
     if score > 59
       if score < 100
@@ -89,12 +118,13 @@ class PlaysController < ApplicationController
       player_stat.save
     end
 
-    #остальную статистику ведем только для правильных бросков, без перебора
-    if temp_score[curr_pos] == 0 || temp_score[curr_pos] > 1
-      total_darts = 0
-      1.upto(3) do |count|
-        #считаем только использованные дротики
-        if params[:play]["dart#{count}"] != "unused"
+    #считаем сколько было использовано дротиков и обновляем статистику по игре и по секторам
+    total_darts = 0
+    1.upto(3) do |count|
+      #считаем только использованные дротики
+      if params[:play]["dart#{count}"] != "unused"
+        #остальную статистику ведем только для правильных бросков, без перебора
+        if game_over == 1 || temp_score[curr_pos] > 1
           player_stat = PlayerStat.find_by(player_id: @play.player, stat_code: "sector_" + params[:play]["dart#{count}"])
           player_stat.stat_value += 1
           player_stat.save
@@ -109,23 +139,27 @@ class PlaysController < ApplicationController
             player_stat.stat_value += 1
             player_stat.save
           end
-          total_darts += 1
         end
+        total_darts += 1
       end
-      stat = GamesStat.find_by(game_id: @game.id, player_id: @play.player)
-      stat.total_points += score
-      stat.total_darts += total_darts
-      if score > stat.max_score
-        stat.max_score = score
-      end
-      stat.save
     end
+
+    #в статистику по игре плюсуем все использованные дротики, а счет обновляем только если не было перебора
+    stat = GamesStat.find_by(game_id: @game.id, player_id: @play.player)
+    if game_over == 1 || temp_score[curr_pos] > 1
+      stat.total_points += score
+    end
+    stat.total_darts += total_darts
+    if score > stat.max_score
+      stat.max_score = score
+    end
+    stat.save
 
     curr_leg = @play.num_leg
     curr_set = @play.num_set
 
     #если игрок закрылся
-    if temp_score[curr_pos] == 0
+    if game_over == 1
       player_stat = PlayerStat.find_by(player_id: @play.player, stat_code: "checkout_success")
       player_stat.stat_value += 1
       player_stat.save
