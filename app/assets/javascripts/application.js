@@ -21,4 +21,5 @@
 //= require datatables
 //= require datatables/jquery.dataTables
 //= require datatables/dataTables.bootstrap4
+//= require heatmap
 //= require_tree .

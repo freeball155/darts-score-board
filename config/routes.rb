@@ -1,10 +1,17 @@
 Rails.application.routes.draw do
+  resources :stats do
+    collection do
+      get 'heatmap'
+    end
+  end
+
   get 'checkout/show'
   get 'welcome/index'
 
   resources :plays do
     collection do
       get 'history'
+      post 'undo'
     end
   end
 

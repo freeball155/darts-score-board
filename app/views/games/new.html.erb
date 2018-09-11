@@ -31,9 +31,12 @@
   <br></br>
 
   <h0>Тип закрытия:</h0>
-  <% [[1, 'любой сектор', false],
-      [2, 'double', true],
-      [4, 'triple', false]].each do |f| %>
+  <% [[ 1, 'любой сектор', false],
+      [ 2, 'последний дротик double', false],
+      [ 4, 'последний дротик triple', false],
+      [ 8, 'любой дротик double', true],
+      [16, 'любой дротик triple', false],
+     ].each do |f| %>
     <li>
       <%= form.check_box :finish_type, { multiple: true, checked: f[2] }, f[0], false %>
       <%= f[1] %>

@@ -93,6 +93,7 @@ end %>
       </tr>
     </thead>
     <tbody>
+      <% if @num_legs != 0 %>
       <tr>
         <td>
           партий
@@ -125,6 +126,7 @@ end %>
           <%= @num_legs %>
         </td>
       </tr>
+      <% end %>
     </tbody>
   </table>
 
@@ -375,20 +377,43 @@ end %>
           среднее:
         </td>
         <td align="left">
-          <%= sprintf('%.2f', @darts_stat[0][2]) %>
+          <%= sprintf('%.2f', @darts_stat[0][2].to_f) %>
         </td>
       </tr>
     <% end %>
     </tbody>
   </table>
 </div>
-
-
-
-
-
-
 </p>
+
+
+
+
+<div id='darts_board'>
+  <%= image_tag("winmau_blade_5.jpg", id: 'darts_board', size: "750x750", class: "align-self-start mr-3") %>
+</div>
+
 <%= link_to 'Назад', players_path %>
 
 </div>
+
+<script type="text/javascript">
+    var heatmapInstance=h337.create({
+      container: document.getElementById('darts_board')
+    });
+
+    $.ajax({
+              type: "GET",
+              url: "/stats/heatmap",
+              data: {id: <%= @player.id %>},
+              async: true,
+              dataType: "json",
+              success: function(response) {
+                heatmapInstance.setData(response);
+              },
+              error: function () {
+                alert("error");
+              }
+           });
+
+</script>
