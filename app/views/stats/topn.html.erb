@@ -1,0 +1,211 @@
+<div class="container">
+  <h1>TOP-5</h1>
+  <div class="row">
+    <div class="col-6">
+      <%
+        result = GamesStat
+          .joins('LEFT JOIN players ON games_stats.player_id = players.id')
+          .group('player_id')
+          .order('avg DESC')
+          .select('players.name,1.0*sum(total_points)/sum(total_darts) as avg')
+      %>
+      <table class="table table-striped table-sm text-right" style="margin: 0px auto;">
+        <caption style="caption-side: top; font-weight: bold;">В среднем с одного дротика</caption>
+        <thead class="thead-dark">
+          <tr>
+            <th class="w-75"></th>
+            <th class="w-25"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% result.each do |item| %>
+            <tr>
+              <td align="right">
+                <%= item.name %>
+              </td>
+              <td align="left">
+                <%= sprintf('%.2f', item.avg) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-6">
+      <%
+        result = PlayerStat.connection.select_all("
+          SELECT players.name, 100.0 * first.stat_value / second.stat_value as avg
+          FROM player_stats as first
+          LEFT JOIN player_stats as second
+            ON first.player_id == second.player_id and second.stat_code=='checkout_total'
+          LEFT JOIN players
+            ON first.player_id == players.id
+          WHERE first.stat_code=='checkout_success'
+          ORDER BY avg DESC
+        ")
+      %>
+      <table class="table table-striped table-sm text-right" style="margin: 0px auto;">
+        <caption style="caption-side: top; font-weight: bold;">Процент успешных закрытий</caption>
+        <thead class="thead-dark">
+          <tr>
+            <th class="w-75"></th>
+            <th class="w-25"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% result.each do |item| %>
+            <tr>
+              <td align="right">
+                <%= item['name'] %>
+              </td>
+              <td align="left">
+                <%= sprintf('%.2f', item['avg']) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-6">
+      <%
+        result = PlayerStat.connection.select_all("
+          SELECT players.name, 100.0 * first.stat_value / second.stat_value as avg
+          FROM player_stats as first
+          LEFT JOIN player_stats as second
+            ON first.player_id == second.player_id and second.stat_code=='num_sets'
+          LEFT JOIN players
+            ON first.player_id == players.id
+          WHERE first.stat_code=='num_sets_won'
+          ORDER BY avg DESC
+        ")
+      %>
+      <table class="table table-striped table-sm text-right" style="margin: 0px auto;">
+        <caption style="caption-side: top; font-weight: bold;">Процент выигранных матчей</caption>
+        <thead class="thead-dark">
+          <tr>
+            <th class="w-75"></th>
+            <th class="w-25"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% result.each do |item| %>
+            <tr>
+              <td align="right">
+                <%= item['name'] %>
+              </td>
+              <td align="left">
+                <%= sprintf('%.2f', item['avg']) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-6">
+      <%
+        result = PlayerStat.connection.select_all("
+          SELECT players.name, 1.0 * first.stat_value / second.stat_value as avg
+          FROM player_stats as first
+          LEFT JOIN player_stats as second
+            ON first.player_id == second.player_id and second.stat_code=='checkout_success'
+          LEFT JOIN players
+            ON first.player_id == players.id
+          WHERE first.stat_code=='checkout_sum'
+          ORDER BY avg DESC
+        ")
+      %>
+      <table class="table table-striped table-sm text-right" style="margin: 0px auto;">
+        <caption style="caption-side: top; font-weight: bold;">Среднее кол-во очков при закрытии</caption>
+        <thead class="thead-dark">
+          <tr>
+            <th class="w-75"></th>
+            <th class="w-25"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% result.each do |item| %>
+            <tr>
+              <td align="right">
+                <%= item['name'] %>
+              </td>
+              <td align="left">
+                <%= sprintf('%.2f', item['avg']) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-6">
+      <%
+        result = PlayerStat.connection.select_all("
+          SELECT players.name, stat_value
+          FROM player_stats
+          LEFT JOIN players
+            ON player_stats.player_id == players.id
+          WHERE stat_code=='max_points'
+          ORDER BY stat_value DESC
+        ")
+      %>
+      <table class="table table-striped table-sm text-right" style="margin: 0px auto;">
+        <caption style="caption-side: top; font-weight: bold;">Максимальное кол-во очков за подход</caption>
+        <thead class="thead-dark">
+          <tr>
+            <th class="w-75"></th>
+            <th class="w-25"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% result.each do |item| %>
+            <tr>
+              <td align="right">
+                <%= item['name'] %>
+              </td>
+              <td align="left">
+                <%= item['stat_value'] %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-6">
+      <%
+        result = Game
+            .joins('LEFT JOIN games_stats ON games_stats.player_id == games.player_won AND games_stats.game_id == games.id')
+            .joins('LEFT JOIN players ON players.id == games.player_won')
+            .group('player_won')
+            .order('avg ASC')
+            .select('players.name,avg(total_darts) as avg')
+      %>
+      <table class="table table-striped table-sm text-right" style="margin: 0px auto;">
+        <caption style="caption-side: top; font-weight: bold;">Среднее кол-во дротиков на партию</caption>
+        <thead class="thead-dark">
+          <tr>
+            <th class="w-75"></th>
+            <th class="w-25"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% result.each do |item| %>
+            <tr>
+              <td align="right">
+                <%= item.name %>
+              </td>
+              <td align="left">
+                <%= sprintf('%.0f', item.avg) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

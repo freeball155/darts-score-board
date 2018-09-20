@@ -1,4 +1,10 @@
 class StatsController < ApplicationController
+  def topn
+  end
+
+  def players
+  end
+
   def heatmap
     #outer radiuses of each zones
     sec_radius = {'bull': 10.5, '25': 25, 'inner': 145, 'T': 160, 'outer': 238, 'D': 253}
@@ -35,7 +41,12 @@ class StatsController < ApplicationController
         if r.stat_code == 'sector_miss'
           rad = 320
           angle = 0
-          count = 20
+          logger.debug params[:miss_matter]
+          if params[:miss_matter] == "1"
+            count = 20
+          else
+            count = 0
+          end
           radius = 100
         elsif r.stat_code =~ /sector_([DT]?)([0-9]+)/
           case $1

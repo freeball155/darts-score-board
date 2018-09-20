@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   resources :stats do
     collection do
       get 'heatmap'
+      get 'topn'
+      get 'players'
     end
   end
 
