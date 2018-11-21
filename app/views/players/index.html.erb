@@ -11,7 +11,7 @@
       <tr>
         <td><%= player.name %></td>
         <td><%= link_to 'Статистика', player_path(player) %></td>
-        <td><%= link_to 'Удалить', player_path(player),
+        <td><%= link_to_if current_user.admin?, 'Удалить', player_path(player),
                 method: :delete,
                 data: { confirm: 'Уверены?' } %></td>
       </tr>

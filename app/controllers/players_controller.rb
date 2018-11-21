@@ -27,9 +27,11 @@ class PlayersController < ApplicationController
   end
 
   def destroy
-    @player = Player.find(params[:id])
-    PlayerStat.where(player_id: @player.id).delete_all
-    @player.destroy
+    if current_user.admin?
+      @player = Player.find(params[:id])
+      PlayerStat.where(player_id: @player.id).delete_all
+      @player.destroy
+    end
 
     redirect_to :controller => 'players', :action => 'index'
   end
