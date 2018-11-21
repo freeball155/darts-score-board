@@ -81,7 +81,10 @@ class PlaysController < ApplicationController
         end
       #finish_type == 8 - закрываться можно через double в любом броске
       elsif (@game.finish_type & 0b01000) >> 3 == 1
+      #  logger.debug "Любой бросок double"
+      #  logger.debug params[:play]["dart1"] + params[:play]["dart2"] + params[:play]["dart3"]
         if params[:play]["dart1"] + params[:play]["dart2"] + params[:play]["dart3"] =~ /(D|50)/
+      #    logger.debug "match"
           game_over = 1
         end
       #finish_type == 16 - закрываться можно через triple в любом броске
@@ -211,7 +214,7 @@ class PlaysController < ApplicationController
       if next_player == @game.num_players
         next_player = 0
       end
-      if temp_score[curr_pos] < 0 || temp_score[curr_pos] == 1
+      if temp_score[curr_pos] <= 1
         temp_score[curr_pos] += score
       end
       @game.score = temp_score.join(',')

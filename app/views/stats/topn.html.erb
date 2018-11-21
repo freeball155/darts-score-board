@@ -208,4 +208,43 @@
       </table>
     </div>
   </div>
+
+
+  <div class="row">
+    <div class="col-6">
+      <%
+        result = PlayerStat
+          .joins('LEFT JOIN players ON player_id == players.id')
+          .where(stat_code: 'checkout_maximum')
+          .group('player_id')
+          .order('stat_value DESC')
+          .select('players.name, stat_value')
+      %>
+      <table class="table table-striped table-sm text-right" style="margin: 0px auto;">
+        <caption style="caption-side: top; font-weight: bold;">Максимальное кол-во очков при закрытии</caption>
+        <thead class="thead-dark">
+          <tr>
+            <th class="w-75"></th>
+            <th class="w-25"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% result.each do |item| %>
+            <tr>
+              <td align="right">
+                <%= item['name'] %>
+              </td>
+              <td align="left">
+                <%= item['stat_value'] %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-6">
+    </div>
+  </div>
+
+
 </div>

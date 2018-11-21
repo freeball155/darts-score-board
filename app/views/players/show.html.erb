@@ -396,7 +396,7 @@ end %>
   <%= image_tag("winmau_blade_5.jpg", id: 'darts_board', size: "750x750", class: "align-self-start mr-3") %>
 </div>
 <div>
-  <input type="checkbox" id="miss_matter" name="feature" value="miss_matter" onclick="draw_heatmap()" checked />
+  <input type="checkbox" id="miss_matter" name="feature" value="miss_matter"  checked />
   <label for="miss_matter">С учетом промахов</label>
 </div>
 
@@ -430,4 +430,6 @@ end %>
               }
            });
   }
+
+  draw_heatmap();
 </script>
