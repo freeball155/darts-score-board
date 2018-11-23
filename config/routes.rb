@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { registrations: "registrations"}
+
   resources :stats do
     collection do
       get 'heatmap'
@@ -18,7 +19,6 @@ Rails.application.routes.draw do
     end
   end
 
-
   resources :players
 
   resources :games do
@@ -28,4 +28,6 @@ Rails.application.routes.draw do
   end
 
   root 'welcome#index'
+
+  resources :users
 end

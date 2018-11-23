@@ -11,13 +11,13 @@
 // about supported directives.
 //
 //= require jquery
-//= require popper
-//= require bootstrap
 //= require jquery_ujs
+//= require turbolinks
+//= require bootstrap
+//= require popper
 //= require highcharts
 //= require chartkick
 //= require activestorage
-//= require turbolinks
 //= require datatables
 //= require datatables/jquery.dataTables
 //= require datatables/dataTables.bootstrap4

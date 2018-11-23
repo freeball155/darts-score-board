@@ -1,30 +1,27 @@
-<div class="container">
-
-    <table class="table table-striped table-sm">
-      <thead class="thead-dark">
-        <tr>
-          <th>#</th>
-          <th>игрок</th>
-          <th>бросок</th>
-          <th>data</th>
-        </tr>
-      </thead>
-      <% game_state = Game.find(params[:id]).state %>
-      <tbody >
-        <% moves = Play.where(game_id: params[:id]) %>
-        <% moves.each do |move| %>
-          <tr>
-            <td><%= move.turn %></td>
-            <% player = Player.find(move.player) %>
-            <td><%= player.name %></td>
-            <td><%= move.dart1 + ',' + move.dart2 + ',' + move.dart3 %></td>
-            <td>
-              <% if game_state != "finished" %>
-                <%= link_to 'Отменить', {:controller => "plays", :action => "undo", :play_id => move.id, :game_id => params[:id]}, data: { confirm: 'Are you sure?' }, :method=>:post, class: "btn btn-secondary btn-sm" %>
-              <% end %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-</div>
+<table class="table table-striped table-sm">
+  <thead class="thead-dark">
+    <tr>
+      <th>#</th>
+      <th>игрок</th>
+      <th>бросок</th>
+      <th>data</th>
+    </tr>
+  </thead>
+  <% game_state = Game.find(params[:id]).state %>
+  <tbody >
+    <% moves = Play.where(game_id: params[:id]) %>
+    <% moves.each do |move| %>
+      <tr>
+        <td><%= move.turn %></td>
+        <% player = Player.find(move.player) %>
+        <td><%= player.name %></td>
+        <td><%= move.dart1 + ',' + move.dart2 + ',' + move.dart3 %></td>
+        <td>
+          <% if game_state != "finished" %>
+            <%= link_to 'Отменить', {:controller => "plays", :action => "undo", :play_id => move.id, :game_id => params[:id]}, data: { confirm: 'Are you sure?' }, :method=>:post, class: "btn btn-secondary btn-sm" %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

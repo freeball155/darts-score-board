@@ -7,27 +7,98 @@
 
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <style>
+      body {
+        padding-top: 60px;
+      }
+      @media (max-width: 980px) {
+        body {
+          padding-top: 0;
+        }
+      }
+    </style>
   </head>
 
   <body>
-    <div class="container">
-      <% if user_signed_in? %>
-        <div class="row">
-        Logged in as <strong><%= current_user.email %></strong>.
-        </div>
-        <div class="row">
-        Current role is <%= current_user.role %>
-        </div>
-        <div class="row">
-        <%= link_to 'Edit profile', edit_user_registration_path, :class => 'navbar-link' %> |
-        <%= link_to "Logout", destroy_user_session_path, method: :delete, :class => 'navbar-link'  %>
-        </div>
-      <% else %>
-        <%= link_to "Sign up", new_user_registration_path, :class => 'navbar-link'  %> |
-        <%= link_to "Login", new_user_session_path, :class => 'navbar-link'  %>
-      <% end %>
-    </div>
+    <% if user_signed_in? %>
+      <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+        <!--- <div class="navbar-header"> --->
+          <a class="navbar-brand" href="#">
+            <%= image_tag("winmau_blade_5.jpg", size: "30x30", class: "d-inline-block align-top", alt: "") %>
+            Darts Scoreboard
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        <!--- </div> --->
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="nav navbar-nav">
+            <li class="nav-item">
+              <% if params[:controller] == 'players' %>
+                <%= link_to 'Игроки', {controller: 'players'}, class: "nav-link active" %>
+              <% else %>
+                <%= link_to 'Игроки', {controller: 'players'}, class: "nav-link" %>
+              <% end %>
+            </li>
+            <li class="nav-item">
+              <% if params[:controller] == 'games' %>
+                <%= link_to 'Игры', {controller: 'games'}, class: "nav-link active" %>
+              <% else %>
+                <%= link_to 'Игры', {controller: 'games'}, class: "nav-link" %>
+              <% end %>
+            </li>
+            <li class="nav-item dropdown">
+              <% if params[:controller] == 'stats' %>
+                <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Статистика
+                </a>
+              <% else %>
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Статистика
+                </a>
+              <% end %>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <%= link_to 'TOP-5', {controller: 'stats', action: 'topn'}, class: "dropdown-item" %>
+                <%= link_to 'По игрокам', {controller: 'stats', action: 'players'},  class: "dropdown-item" %>
+              </div>
+            </li>
+            <% if current_user.admin? %>
+            <li class="nav-item">
+              <% if current_page?(controller: 'users') %>
+                <%= link_to 'Пользователи', {controller: 'users'}, class: "nav-link active" %>
+              <% else %>
+                <%= link_to 'Пользователи', {controller: 'users'}, class: "nav-link" %>
+              <% end %>
+            </li>
+            <% end %>
+          </ul>
 
-    <%= yield %>
+          <ul class="nav navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <%= current_user.email %>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <%= link_to '<i class="fas fa-sign-out-alt"></i> Logout'.html_safe, destroy_user_session_path, method: :delete, class: 'dropdown-item' %>
+                <%= link_to '<i class="fas fa-edit"></i> Edit profile'.html_safe, edit_user_password_path, method: :get, class: 'dropdown-item' %>
+              </div>
+            </li>
+          </ul>
+        </div>
+        </div>
+      </nav>
+    <% end %>
+
+    <div class="container-fluid">
+      <% if notice %>
+        <p class="alert alert-success"><%= notice %></p>
+      <% end %>
+      <% if alert %>
+        <p class="alert alert-danger"><%= alert %></p>
+      <% end %>
+
+      <%= yield %>
+    </div>
   </body>
 </html>
