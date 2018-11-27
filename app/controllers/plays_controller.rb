@@ -83,7 +83,7 @@ class PlaysController < ApplicationController
       elsif (@game.finish_type & 0b01000) >> 3 == 1
       #  logger.debug "Любой бросок double"
       #  logger.debug params[:play]["dart1"] + params[:play]["dart2"] + params[:play]["dart3"]
-        if params[:play]["dart1"] + params[:play]["dart2"] + params[:play]["dart3"] =~ /(D|50)/
+        if params[:play]["dart1"] + params[:play]["dart2"] + params[:play]["dart3"] =~ /(D\d+|50)/
       #    logger.debug "match"
           game_over = 1
         end
