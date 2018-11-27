@@ -84,14 +84,11 @@
     <% if @game.state == "new" %>
       <%= link_to 'Перемешать игроков', sorting_games_path(:id => @game.id), class: "btn btn-secondary btn-sm" %>
     <% end %>
-    <%= if @game.state == "finished"
+    <%=
       link_to 'Удалить', {:controller => "games", :action => "destroy", :id => @game.id},
                 method: :delete,
-                data: { confirm: 'Are you sure?' }, class: "btn btn-secondary btn-sm"
-    else
-      link_to 'Играть', {:controller => "plays", :action => "show", :id => @game.id}, class: "btn btn-secondary btn-sm"
-    end
-    %>
+                data: { confirm: 'Are you sure?' }, class: "btn btn-secondary btn-sm" %>
+    <%= link_to 'Играть', {:controller => "plays", :action => "show", :id => @game.id}, class: "btn btn-secondary btn-sm" %>
   </div>
 
 <% if @game.state != "new" %>
