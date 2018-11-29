@@ -209,7 +209,7 @@ $(document).ready(function() {
   $.ajax({
             type: "GET",
             url: "/checkout/show",
-            data: {id: java_curr_score},
+            data: {points: java_curr_score, num_darts: 4-throw_count},
             async: true,
             dataType: "json",
             success: function(response) {
@@ -217,6 +217,9 @@ $(document).ready(function() {
               if (response['combination'] != 'NA') {
                 document.getElementById("curr_player_table").style.background = "green";
                 document.getElementById("curr_player_table").style.color = "white";
+              } else {
+                document.getElementById("curr_player_table").style.background = "white";
+                document.getElementById("curr_player_table").style.color = "black";
               }
             },
             error: function () {
@@ -231,7 +234,7 @@ $(document).ready(function() {
     $.ajax({
               type: "GET",
               url: "/checkout/show",
-              data: {id: java_curr_score},
+              data: {points: java_curr_score, num_darts: 4-throw_count},
               async: true,
               dataType: "json",
               success: function(response) {
@@ -239,6 +242,9 @@ $(document).ready(function() {
                 if (response['combination'] != 'NA') {
                   document.getElementById("curr_player_table").style.background = "green";
                   document.getElementById("curr_player_table").style.color = "white";
+                } else {
+                  document.getElementById("curr_player_table").style.background = "white";
+                  document.getElementById("curr_player_table").style.color = "black";
                 }
               },
               error: function () {
@@ -292,7 +298,7 @@ $(document).ready(function() {
         $.ajax({
                   type: "GET",
                   url: "/checkout/show",
-                  data: {id: java_curr_score},
+                  data: {points: java_curr_score, num_darts: 4-throw_count},
                   async: true,
                   dataType: "json",
                   success: function(response) {
@@ -300,6 +306,9 @@ $(document).ready(function() {
                     if (response['combination'] != 'NA') {
                       document.getElementById("curr_player_table").style.background = "green";
                       document.getElementById("curr_player_table").style.color = "white";
+                    } else {
+                      document.getElementById("curr_player_table").style.background = "white";
+                      document.getElementById("curr_player_table").style.color = "black";
                     }
                   },
                   error: function () {
