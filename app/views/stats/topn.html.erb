@@ -34,7 +34,7 @@
   <div class="col-6">
     <%
       result = PlayerStat.connection.select_all("
-        SELECT players.name, 100.0 * first.stat_value / second.stat_value as avg
+        SELECT players.name, coalesce(100.0 * first.stat_value / second.stat_value,0) as avg
         FROM player_stats as first
         LEFT JOIN player_stats as second
           ON first.player_id == second.player_id and second.stat_code=='checkout_total'
@@ -108,7 +108,7 @@
   <div class="col-6">
     <%
       result = PlayerStat.connection.select_all("
-        SELECT players.name, 1.0 * first.stat_value / second.stat_value as avg
+        SELECT players.name, coalesce(1.0 * first.stat_value / second.stat_value, 0) as avg
         FROM player_stats as first
         LEFT JOIN player_stats as second
           ON first.player_id == second.player_id and second.stat_code=='checkout_success'
