@@ -1,167 +1,127 @@
-  <div class="media">
-    <%= image_tag("winmau_blade_5.jpg", id: 'darts_board', size: "750x750", class: "align-self-start mr-3") %>
-    <div class="media-body">
-      <div class="row">
-        <div class="col">
-          <strong>Тип игры: </strong>
-          <%= @game.game_type %>
-          <% if @game.game_type == "X01" %>
-              <strong>до очков:</strong>
-              <%= @game.points %>
-          <% end %>
-        </div>
+<div class="media">
+  <%= image_tag("winmau_blade_5.jpg", id: 'darts_board', size: "750x750", class: "align-self-start mr-3") %>
+  <div class="media-body">
+    <div class="row">
+      <div class="col">
+        <strong>Тип игры: </strong>
+        <%= @game.game_type %>
+        <% if @game.game_type == "X01" %>
+            <strong>до очков:</strong>
+            <%= @game.points %>
+        <% end %>
       </div>
+    </div>
 
-      <div class="row">
-        <div class="col-sm">
-          <strong>Партия:</strong>
-          <%= @play.num_leg %>
-          <strong>из</strong>
-          <%= @game.num_legs %>
-        </div>
+    <div class="row">
+      <div class="col-sm">
+        <strong>Партия:</strong>
+        <%= @play.num_leg %>
+        <strong>из</strong>
+        <%= @game.num_legs %>
       </div>
+    </div>
 
-      <div class="row">
-        <div class="col-sm">
-          <strong>Сет:</strong>
-          <%= @play.num_set %>
-          <strong>из</strong>
-          <%= @game.num_sets %>
-        </div>
+    <div class="row">
+      <div class="col-sm">
+        <strong>Сет:</strong>
+        <%= @play.num_set %>
+        <strong>из</strong>
+        <%= @game.num_sets %>
       </div>
+    </div>
 
-      <div class="row mt-3 mb-5">
-        <div class="col">
-          <% @curr_player_score = 0 %>
-          <table id="game_table" class="table table-sm">
-            <thead class="thead-dark">
+    <div class="row mt-3 mb-5">
+      <div class="col">
+        <% @curr_player_score = 0 %>
+        <table id="game_table" class="table table-sm">
+          <thead class="thead-dark">
+            <tr>
+              <th class="text-left">игрок</th>
+              <th class="text-right">очки</th>
+              <th class="text-right">1dart avg</th>
+              <th class="text-right">3darts avg</th>
+              <th class="text-right">максимум</th>
+            </tr>
+          </thead>
+          <% count = 0 %>
+          <tbody>
+          <% @game.players.split(',').map(&:to_i).each do |id| %>
+            <% curr_score = @game.score.split(',')[count].to_i %>
+            <% player = Player.find(id) %>
+            <% if player.id == @play.player %>
+              <% @curr_player_score = curr_score %>
+              <% @name = player.name %>
+              <tr bgcolor="#D3D3D3">
+            <% else %>
               <tr>
-                <th class="text-left">игрок</th>
-                <th class="text-right">очки</th>
-                <th class="text-right">1dart avg</th>
-                <th class="text-right">3darts avg</th>
-                <th class="text-right">максимум</th>
-              </tr>
-            </thead>
-            <% count = 0 %>
-            <tbody>
-            <% @game.players.split(',').map(&:to_i).each do |id| %>
-              <% curr_score = @game.score.split(',')[count].to_i %>
-              <% player = Player.find(id) %>
-              <% if player.id == @play.player %>
-                <% @curr_player_score = curr_score %>
-                <% @name = player.name %>
-                <tr bgcolor="#D3D3D3">
-              <% else %>
-                <tr>
-              <% end %>
-                <td>
-                  <%= player.name %>
-                </td>
-                <td align="right">
-                  <%= curr_score %>
-                </td>
-                <% stat = GamesStat.find_by(game_id: @game.id, player_id: id) %>
-                <td align="right">
-                  <% if stat.total_darts != 0 %>
-                    <%= sprintf('%.2f', stat.total_points.to_f / stat.total_darts)  %>
-                  <% else %>
-                    <%= 0 %>
-                  <% end %>
-                </td>
-                <td align="right">
-                  <% if stat.total_darts != 0 %>
-                    <%= sprintf('%.2f', 3 * stat.total_points.to_f / stat.total_darts) %>
-                  <% else %>
-                    <%= 0 %>
-                  <% end %>
-                </td>
-                <td align="right">
-                  <%= stat.max_score %>
-                </td>
-              </tr>
-              <% count = count + 1 %>
             <% end %>
-            </tbody>
-          </table>
+              <td>
+                <%= player.name %>
+              </td>
+              <td align="right">
+                <%= curr_score %>
+              </td>
+              <% stat = GamesStat.find_by(game_id: @game.id, player_id: id) %>
+              <td align="right">
+                <% if stat.total_darts != 0 %>
+                  <%= sprintf('%.2f', stat.total_points.to_f / stat.total_darts)  %>
+                <% else %>
+                  <%= 0 %>
+                <% end %>
+              </td>
+              <td align="right">
+                <% if stat.total_darts != 0 %>
+                  <%= sprintf('%.2f', 3 * stat.total_points.to_f / stat.total_darts) %>
+                <% else %>
+                  <%= 0 %>
+                <% end %>
+              </td>
+              <td align="right">
+                <%= stat.max_score %>
+              </td>
+            </tr>
+            <% count = count + 1 %>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="border rounded" id="curr_player_table">
+      <div class="row mt-1 ml-1">
+        <div class="col-3">
+          <b>Бросает:</b>
+        </div>
+        <div class="col-3">
+          <b>Набрано очков:</b>
+        </div>
+        <div class="col-3">
+          <b>Осталось очков:</b>
+        </div>
+        <div class="col-3">
+          <b>Возможная комбинация:</b>
         </div>
       </div>
 
-
-
-
-
-
-          <div class="border rounded" id="curr_player_table">
-          <div class="row mt-1 ml-1">
-            <div class="col-3">
-              <b>Бросает:</b>
-            </div>
-            <div class="col-3">
-              <b>Набрано очков:</b>
-            </div>
-            <div class="col-3">
-              <b>Осталось очков:</b>
-            </div>
-            <div class="col-3">
-              <b>Возможная комбинация:</b>
-            </div>
-          </div>
-
-          <div class="row mt-1 ml-1">
-            <div class="col-3">
-              <%= @name %>
-            </div>
-            <div class="col-3">
-              <span  id="java_score"></span>
-            </div>
-            <div class="col-3">
-              <span  id="java_curr_score"></span>
-            </div>
-            <div class="col-3">
-              <span id="java_combo"></span>
-            </div>
-          </div>
+      <div class="row mt-1 ml-1">
+        <div class="col-3">
+          <%= @name %>
         </div>
-
-
-
-          <%= form_with scope: :play, url: plays_path(id: @game.id), id: "darts_enter"  do |form| %>
-
-
-
-        <p class="text-center mt-4 font-weight-bold">Дротики:</p>
-        <div class="row">
-          <div class="col-4 m-0">
-                <%= form.select(:dart1, [], {}, {class: "form-control form-control-sm"}) do %>
-                  <% [
-                    ['unused', 'unused'], ['miss', 'miss'],
-                   ['1', '1'],   ['2', '2'],   ['3', '3'],   ['4', '4'],    ['5', '5'],   ['6', '6'],   ['7', '7'],   ['8', '8'],   ['9', '9'],   ['10', '10'],   ['11', '11'],   ['12', '12'],   ['13', '13'],   ['14', '14'],   ['15', '15'],   ['16', '16'],   ['17', '17'],   ['18', '18'],   ['19', '19'],   ['20', '20'],
-                  ['D1', 'D1'], ['D2', 'D2'], ['D3', 'D3'], ['D4', 'D4'],  ['D5', 'D5'], ['D6', 'D6'], ['D7', 'D7'], ['D8', 'D8'], ['D9', 'D9'], ['D10', 'D10'], ['D11', 'D11'], ['D12', 'D12'], ['D13', 'D13'], ['D14', 'D14'], ['D15', 'D15'], ['D16', 'D16'], ['D17', 'D17'], ['D18', 'D18'], ['D19', 'D19'], ['D20', 'D20'],
-                  ['T1', 'T1'], ['T2', 'T2'], ['T3', 'T3'], ['T4', 'T4'],  ['T5', 'T5'], ['T6', 'T6'], ['T7', 'T7'], ['T8', 'T8'], ['T9', 'T9'], ['T10', 'T10'], ['T11', 'T11'], ['T12', 'T12'], ['T13', 'T13'], ['T14', 'T14'], ['T15', 'T15'], ['T16', 'T16'], ['T17', 'T17'], ['T18', 'T18'], ['T19', 'T19'], ['T20', 'T20'],
-                  ['25', '25'], ['50', '50']
-                    ].each do |c| -%>
-                  <%= content_tag(:option, c.first, value: c.last) %>
-                <% end %>
-              <% end %>
-            </div>
-
-            <div class="col-4 m-0">
-              <%= form.select(:dart2, [], {}, {class: "form-control form-control-sm"}) do %>
-                <% [
-                  ['unused', 'unused'], ['miss', 'miss'],
-                 ['1', '1'],   ['2', '2'],   ['3', '3'],   ['4', '4'],    ['5', '5'],   ['6', '6'],   ['7', '7'],   ['8', '8'],   ['9', '9'],   ['10', '10'],   ['11', '11'],   ['12', '12'],   ['13', '13'],   ['14', '14'],   ['15', '15'],   ['16', '16'],   ['17', '17'],   ['18', '18'],   ['19', '19'],   ['20', '20'],
-                ['D1', 'D1'], ['D2', 'D2'], ['D3', 'D3'], ['D4', 'D4'],  ['D5', 'D5'], ['D6', 'D6'], ['D7', 'D7'], ['D8', 'D8'], ['D9', 'D9'], ['D10', 'D10'], ['D11', 'D11'], ['D12', 'D12'], ['D13', 'D13'], ['D14', 'D14'], ['D15', 'D15'], ['D16', 'D16'], ['D17', 'D17'], ['D18', 'D18'], ['D19', 'D19'], ['D20', 'D20'],
-                ['T1', 'T1'], ['T2', 'T2'], ['T3', 'T3'], ['T4', 'T4'],  ['T5', 'T5'], ['T6', 'T6'], ['T7', 'T7'], ['T8', 'T8'], ['T9', 'T9'], ['T10', 'T10'], ['T11', 'T11'], ['T12', 'T12'], ['T13', 'T13'], ['T14', 'T14'], ['T15', 'T15'], ['T16', 'T16'], ['T17', 'T17'], ['T18', 'T18'], ['T19', 'T19'], ['T20', 'T20'],
-                ['25', '25'], ['50', '50']
-                  ].each do |c| -%>
-                <%= content_tag(:option, c.first, value: c.last) %>
-              <% end %>
-            <% end %>
-          </div>
-
-          <div class="col-4 m-0">
-            <%= form.select(:dart3, [], {}, {class: "form-control form-control-sm"}) do %>
+        <div class="col-3">
+          <span  id="java_score"></span>
+        </div>
+        <div class="col-3">
+          <span  id="java_curr_score"></span>
+        </div>
+        <div class="col-3">
+          <span id="java_combo"></span>
+        </div>
+      </div>
+    </div>
+    <%= form_with scope: :play, url: plays_path(id: @game.id), id: "darts_enter"  do |form| %>
+      <p class="text-center mt-4 font-weight-bold">Дротики:</p>
+      <div class="row">
+        <div class="col-4 m-0">
+            <%= form.select(:dart1, [], {}, {class: "form-control form-control-sm"}) do %>
               <% [
                 ['unused', 'unused'], ['miss', 'miss'],
                ['1', '1'],   ['2', '2'],   ['3', '3'],   ['4', '4'],    ['5', '5'],   ['6', '6'],   ['7', '7'],   ['8', '8'],   ['9', '9'],   ['10', '10'],   ['11', '11'],   ['12', '12'],   ['13', '13'],   ['14', '14'],   ['15', '15'],   ['16', '16'],   ['17', '17'],   ['18', '18'],   ['19', '19'],   ['20', '20'],
@@ -173,23 +133,47 @@
             <% end %>
           <% end %>
         </div>
+
+        <div class="col-4 m-0">
+          <%= form.select(:dart2, [], {}, {class: "form-control form-control-sm"}) do %>
+            <% [
+              ['unused', 'unused'], ['miss', 'miss'],
+             ['1', '1'],   ['2', '2'],   ['3', '3'],   ['4', '4'],    ['5', '5'],   ['6', '6'],   ['7', '7'],   ['8', '8'],   ['9', '9'],   ['10', '10'],   ['11', '11'],   ['12', '12'],   ['13', '13'],   ['14', '14'],   ['15', '15'],   ['16', '16'],   ['17', '17'],   ['18', '18'],   ['19', '19'],   ['20', '20'],
+            ['D1', 'D1'], ['D2', 'D2'], ['D3', 'D3'], ['D4', 'D4'],  ['D5', 'D5'], ['D6', 'D6'], ['D7', 'D7'], ['D8', 'D8'], ['D9', 'D9'], ['D10', 'D10'], ['D11', 'D11'], ['D12', 'D12'], ['D13', 'D13'], ['D14', 'D14'], ['D15', 'D15'], ['D16', 'D16'], ['D17', 'D17'], ['D18', 'D18'], ['D19', 'D19'], ['D20', 'D20'],
+            ['T1', 'T1'], ['T2', 'T2'], ['T3', 'T3'], ['T4', 'T4'],  ['T5', 'T5'], ['T6', 'T6'], ['T7', 'T7'], ['T8', 'T8'], ['T9', 'T9'], ['T10', 'T10'], ['T11', 'T11'], ['T12', 'T12'], ['T13', 'T13'], ['T14', 'T14'], ['T15', 'T15'], ['T16', 'T16'], ['T17', 'T17'], ['T18', 'T18'], ['T19', 'T19'], ['T20', 'T20'],
+            ['25', '25'], ['50', '50']
+              ].each do |c| -%>
+              <%= content_tag(:option, c.first, value: c.last) %>
+            <% end %>
+          <% end %>
         </div>
 
-
-
-          <div class="row mt-5 justify-content-center">
-            <div class="col-3">
-              <%= form.submit "Сохранить ход", class: "btn btn-secondary btn-sm" %>
-            </div>
-            <div class="col-3">
-              <%= link_to 'История бросков', {:controller => "plays", :action => "history", :id => @game.id}, class: "btn btn-secondary btn-sm" %>
-            </div>
-          </div>
-
-
+        <div class="col-4 m-0">
+          <%= form.select(:dart3, [], {}, {class: "form-control form-control-sm"}) do %>
+            <% [
+              ['unused', 'unused'], ['miss', 'miss'],
+             ['1', '1'],   ['2', '2'],   ['3', '3'],   ['4', '4'],    ['5', '5'],   ['6', '6'],   ['7', '7'],   ['8', '8'],   ['9', '9'],   ['10', '10'],   ['11', '11'],   ['12', '12'],   ['13', '13'],   ['14', '14'],   ['15', '15'],   ['16', '16'],   ['17', '17'],   ['18', '18'],   ['19', '19'],   ['20', '20'],
+            ['D1', 'D1'], ['D2', 'D2'], ['D3', 'D3'], ['D4', 'D4'],  ['D5', 'D5'], ['D6', 'D6'], ['D7', 'D7'], ['D8', 'D8'], ['D9', 'D9'], ['D10', 'D10'], ['D11', 'D11'], ['D12', 'D12'], ['D13', 'D13'], ['D14', 'D14'], ['D15', 'D15'], ['D16', 'D16'], ['D17', 'D17'], ['D18', 'D18'], ['D19', 'D19'], ['D20', 'D20'],
+            ['T1', 'T1'], ['T2', 'T2'], ['T3', 'T3'], ['T4', 'T4'],  ['T5', 'T5'], ['T6', 'T6'], ['T7', 'T7'], ['T8', 'T8'], ['T9', 'T9'], ['T10', 'T10'], ['T11', 'T11'], ['T12', 'T12'], ['T13', 'T13'], ['T14', 'T14'], ['T15', 'T15'], ['T16', 'T16'], ['T17', 'T17'], ['T18', 'T18'], ['T19', 'T19'], ['T20', 'T20'],
+            ['25', '25'], ['50', '50']
+              ].each do |c| -%>
+              <%= content_tag(:option, c.first, value: c.last) %>
+            <% end %>
           <% end %>
+        </div>
+      </div>
+      <div class="row mt-5 justify-content-center">
+        <div class="col-3">
+          <%= form.submit "Сохранить ход", class: "btn btn-secondary btn-sm" %>
+        </div>
+        <div class="col-3">
+          <%= link_to 'История бросков', {:controller => "plays", :action => "history", :id => @game.id}, class: "btn btn-secondary btn-sm" %>
+        </div>
+      </div>
 
+    <% end %>
   </div>
+</div>
 
 <script type="text/javascript">
 var calc_table = {
@@ -198,9 +182,12 @@ var calc_table = {
   "D1" :2, "D2": 4, "D3": 6, "D4": 8, "D5": 10, "D6": 12, "D7": 14, "D8": 16, "D9": 18, "D10": 20, "D11": 22, "D12": 24, "D13": 26, "D14": 28, "D15": 30, "D16": 32, "D17": 34, "D18": 36, "D19": 38, "D20": 40,
   "T1" :3, "T2": 6, "T3": 9, "T4": 12, "T5": 15, "T6": 18, "T7": 21, "T8": 24, "T9": 27, "T10": 30, "T11": 33, "T12": 36, "T13": 39, "T14": 42, "T15": 45, "T16": 48, "T17": 51, "T18": 54, "T19": 57, "T20": 60
 }
+
 $(document).ready(function() {
   var throw_count = 1;
   var java_start_score = <%= @curr_player_score %>;
+  var java_game_finishtype = <%= @game.finish_type %>;
+  var java_player_id = <%= @play.player %>;
   var java_curr_score = java_start_score;
   var java_points = 0;
   java_curr_score = java_start_score - java_points;
@@ -209,7 +196,7 @@ $(document).ready(function() {
   $.ajax({
             type: "GET",
             url: "/checkout/show",
-            data: {points: java_curr_score, num_darts: 4-throw_count},
+            data: {points: java_curr_score, num_darts: 4-throw_count, finish_type: java_game_finishtype, player_id: java_player_id},
             async: true,
             dataType: "json",
             success: function(response) {
@@ -234,7 +221,7 @@ $(document).ready(function() {
     $.ajax({
               type: "GET",
               url: "/checkout/show",
-              data: {points: java_curr_score, num_darts: 4-throw_count},
+              data: {points: java_curr_score, num_darts: 4-throw_count, finish_type: java_game_finishtype, player_id: java_player_id},
               async: true,
               dataType: "json",
               success: function(response) {
@@ -298,7 +285,7 @@ $(document).ready(function() {
         $.ajax({
                   type: "GET",
                   url: "/checkout/show",
-                  data: {points: java_curr_score, num_darts: 4-throw_count},
+                  data: {points: java_curr_score, num_darts: 4-throw_count, finish_type: java_game_finishtype, player_id: java_player_id},
                   async: true,
                   dataType: "json",
                   success: function(response) {

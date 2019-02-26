@@ -32,3 +32,4 @@
 
 .DS_Store
 *.lock
+/config/environments/development.rb

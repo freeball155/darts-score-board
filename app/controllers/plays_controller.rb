@@ -70,26 +70,27 @@ class PlaysController < ApplicationController
       #finish_type == 1 - закрываться можно через любой сектор
       if (@game.finish_type & 0b00001) == 1
         game_over = 1
+      end
       #finish_type == 2 - закрываться можно через последний double
-      elsif (@game.finish_type & 0b00010) >> 1 == 1
-        if checkout_str =~ /(D\d+|50)(unused|miss)*/
+      if (@game.finish_type & 0b00010) >> 1 == 1
+        if checkout_str =~ /(D\d+|50)(unused|miss)*$/
           game_over = 1
         end
+      end
       #finish_type == 4 - закрываться можно через последний triple
-      elsif (@game.finish_type & 0b00100) >> 2 == 1
-        if checkout_str =~ /(T\d+)(unused|miss)*/
+      if (@game.finish_type & 0b00100) >> 2 == 1
+        if checkout_str =~ /(T\d+)(unused|miss)*$/
           game_over = 1
         end
+      end
       #finish_type == 8 - закрываться можно через double в любом броске
-      elsif (@game.finish_type & 0b01000) >> 3 == 1
-      #  logger.debug "Любой бросок double"
-      #  logger.debug params[:play]["dart1"] + params[:play]["dart2"] + params[:play]["dart3"]
+      if (@game.finish_type & 0b01000) >> 3 == 1
         if checkout_str =~ /(D\d+|50)/
-      #    logger.debug "match"
           game_over = 1
         end
+      end
       #finish_type == 16 - закрываться можно через triple в любом броске
-      elsif (@game.finish_type & 0b10000) >> 4 == 1
+      if (@game.finish_type & 0b10000) >> 4 == 1
         if checkout_str =~ /T\d+/
           game_over = 1
         end
