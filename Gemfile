@@ -72,3 +72,7 @@ gem 'highcharts-rails'
 gem 'paper_trail'
 gem 'devise'
 gem 'font-awesome-sass', '~> 5.5.0'
+gem 'mailgun_rails'
+#gem "bootstrap-switch-rails"
+#gem 'switchery-rails'
+#gem 'bootstrap-toggle-rails'
